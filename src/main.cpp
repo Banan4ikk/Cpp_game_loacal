@@ -3,33 +3,29 @@
 
 class Controls{
     bool is_exit = false;
+    enum sides{
+        left = 1,
+        right,
+        down,
+        up
+    };
 public:
     bool isExit() const {
         return is_exit;
     }
 
-    int updateX(int x,int speed){
+    int getSide(){
+        int side=0;
         while (terminal_has_input()){
             auto key = terminal_read();
             switch (key) {
-                case TK_D: x-=speed;
-                case TK_A: x+=speed;
-                default: continue;
+                case TK_UP: side = up;break;
+                case TK_DOWN: side = down;break;
+                case TK_LEFT: side = left;break;
+                case TK_RIGHT: side = right;break;
             }
         }
-        return x;
-    }
-
-    int updateY(int y, int speed){
-        while (terminal_has_input()){
-            auto key = terminal_read();
-            switch (key) {
-                case TK_W: y-=speed;
-                case TK_S: y+=speed;
-                default: continue;
-            }
-        }
-        return y;
+        return side;
     }
     void chekExit(){
         auto key = NULL;
@@ -42,8 +38,8 @@ public:
 
 class Player{
     Controls& controls;
-    int speed_x=1;
-    int speed_y=1;
+
+    int speed=1;
     const char symbol ='@';
     int x;
     int y;
@@ -52,8 +48,14 @@ public:
 
 private:
     void move(){
-        controls.updateX(x,speed_x);
-        controls.updateY(y,speed_y);
+        int side = controls.getSide();
+
+        switch (side) {
+            case 1: x-=speed;break;//left
+            case 2: x+=speed;break;//right
+            case 3: y-=speed;break;//up
+            case 4: y+=speed;break;//down
+        }
     }
     void render(){
         terminal_put(x,y,symbol);
@@ -76,7 +78,9 @@ int main()
     Player player{controls,5,5};
 
     while (!controls.isExit()){
+
         player.update();
+
         terminal_refresh();
     }
 
