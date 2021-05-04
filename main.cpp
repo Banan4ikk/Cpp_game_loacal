@@ -1,6 +1,15 @@
 #include <iostream>
 #include <BearLibTerminal.h>
 
+class Controls{
+    bool is_exit;
+
+};
+
+class Player{
+
+};
+
 int main()
 {
     terminal_open();
@@ -10,7 +19,10 @@ int main()
     terminal_refresh();
 
     // Ждем, пока пользователь не закроет окно
-    while (terminal_read() != TK_CLOSE);
+    while (true){
+        if(isExit())
+            break;
+    };
 
     terminal_close();
 }
