@@ -12,8 +12,8 @@ public:
         while (terminal_has_input()){
             auto key = terminal_read();
             switch (key) {
-                case TK_LEFT: x-=speed;
-                case TK_RIGHT: x+=speed;
+                case TK_D: x-=speed;
+                case TK_A: x+=speed;
                 default: continue;
             }
         }
@@ -24,14 +24,14 @@ public:
         while (terminal_has_input()){
             auto key = terminal_read();
             switch (key) {
-                case TK_LEFT: y-=speed;
-                case TK_RIGHT: y+=speed;
+                case TK_W: y-=speed;
+                case TK_S: y+=speed;
                 default: continue;
             }
         }
         return y;
     }
-    void exit(){
+    void chekExit(){
         auto key = NULL;
         if(terminal_has_input())
             key = terminal_read();
@@ -41,13 +41,16 @@ public:
 };
 
 class Player{
-    Controls controls;
+    Controls& controls;
     int speed_x=1;
     int speed_y=1;
     const char symbol ='@';
     int x;
     int y;
+public:
+    Player(Controls &controls, int x, int y) : controls(controls), x(x), y(y) {}
 
+private:
     void move(){
         controls.updateX(x,speed_x);
         controls.updateY(y,speed_y);
@@ -55,10 +58,10 @@ class Player{
     void render(){
         terminal_put(x,y,symbol);
     }
-public:
-    Player(int x, int y) : x(x), y(y) {}
 
+public:
     void update(){
+        controls.chekExit();
         move();
         render();
     }
@@ -67,17 +70,15 @@ public:
 int main()
 {
     terminal_open();
-
-    // Выводим текст
-    terminal_printf(12, 17, "Hello, world!");
     terminal_refresh();
 
     Controls controls{};
-    Player player{5,5};
-    // Ждем, пока пользователь не закроет окно
+    Player player{controls,5,5};
+
     while (!controls.isExit()){
         player.update();
-    };
+        terminal_refresh();
+    }
 
     terminal_close();
 }
